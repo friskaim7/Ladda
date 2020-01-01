@@ -1837,26 +1837,29 @@ bool check_kill(int dadu)
 			
 			for(j=0; j<4; j++)
 			{
-				if (nowPlayer[i].position[j] + otherPlayerStart > 43)
+				if (nowPlayer[i].onTrackPion[j])
 				{
-					otherPlayerStart -= 44;	
-				}
-				
-				if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
-				{
-					start -= 44;	
-				}
-				
-				if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
-				{
-					safe = safezone(nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion]);
-					if(safe == true)
+					if (nowPlayer[i].position[j] + otherPlayerStart > 43)
 					{
-						return false;
+						otherPlayerStart -= 44;	
 					}
-					else if(safe == false)
+					
+					if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
 					{
-						return true;
+						start -= 44;	
+					}
+					
+					if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
+					{
+						safe = safezone(nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion]);
+						if(safe == true)
+						{
+							return false;
+						}
+						else if(safe == false)
+						{
+							return true;
+						}	
 					}	
 				}
 			}
@@ -1933,75 +1936,6 @@ void killing(int dadu)
 				}
 			}
 		}
-		
-		/*
-		if(i != indexPlayer)
-		{
-			if(i == 0)
-			{
-				otherPlayerStart = 0;
-			}
-			else if(i == 1)
-			{
-				otherPlayerStart = 11;
-			}
-			else if(i == 2)
-			{
-				otherPlayerStart = 22;
-			}
-			else if(i == 3)
-			{
-				otherPlayerStart = 33;
-			}
-		}
-		else if(i == indexPlayer)
-		{
-			if(i == 0)
-			{
-				start = 0;
-			}
-			else if(i == 1)
-			{
-				start = 11;
-			}
-			else if(i == 2)
-			{
-				start = 22;
-			}
-			else if(i == 3)
-			{
-				start = 33;
-			}
-		}
-		for(j=0; j<4; j++)
-		{
-			if (nowPlayer[i].onTrackPion[j])
-			{
-				if (nowPlayer[i].position[j] + otherPlayerStart > 43)
-				{
-					otherPlayerStart -= 44;	
-				}
-				
-				if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
-				{
-					start -= 44;	
-				}
-
-				if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
-				{
-					nowPlayer[i].position[j] = -1;
-					nowPlayer[i].onTrackPion[j] = false;
-					Player = i;
-					Pion = j;
-					gotoxy(75,6);printf("                                                                    ");
-					gotoxy(75,6);printf("Pion %d milik %s kembali ke Home.", j+1, nowPlayer[i].name);
-					visual_move_pion(Player, Pion);
-					gotoxy(75,7);system("pause");
-				}	
-			}
-			
-		}
-		*/	
 	}
 }
 
@@ -2134,16 +2068,87 @@ int killer(int dadu)
 		{
 			// ini diubah jadi continue
 			continue;
-			/*
-			nowPlayer[indexPlayer].selectedPion = indexPion;
-			selected = indexPion+1;		
-			return selected;
-			*/
 		}
 	}
 	
 	for(i=0; i<jmlPlayer; i++)
 	{
+		if (i != indexPlayer)
+		{
+			otherPlayerStart = 0 + (11 * (i - 0));
+			start = 0 + (11 * (indexPlayer - 0));
+			
+			// hitung banyak pembunuhan yang bisa dilakukan
+			for(j=0; j<4; j++)
+			{
+				for(k=0; k<4; k++)
+				{
+					if(nowPlayer[indexPlayer].moveable[k] == k)
+					{
+						if (nowPlayer[i].onTrackPion[j])
+						{
+							if(((nowPlayer[i].position[j] - start) - ((nowPlayer[indexPlayer].position[k] - otherPlayerStart)+dadu)) == 0 )
+							{
+								canKill++;
+								// ini jadi indexPlayer yak, bukan indexPion
+								nowPlayer[indexPlayer].selectedPion = k;
+								selected = k+1;
+								return selected;
+							}	
+						}
+					}
+				}	
+			}
+		}
+	}
+	
+	if (canKill == 0)
+	{
+		for(i=0; i<jmlPlayer; i++)
+		{
+			if (i != indexPlayer)
+			{
+				otherPlayerStart = 0 + (11 * (i - 0));
+				start = 0 + (11 * (indexPlayer - 0));
+				
+				for(j=0; j<4; j++)
+				{
+					for(k=0; k<4; k++)
+					{
+						if(nowPlayer[indexPlayer].moveable[k] == k)
+						{
+							if(((nowPlayer[i].position[j] - start) - ((nowPlayer[indexPlayer].position[k] - otherPlayerStart) + dadu)) <= 6 )
+							{
+								// ini juga harusnya indexPlayer
+								nowPlayer[indexPlayer].selectedPion = k;
+								selected = k+1;
+								return selected;
+								break;
+							}
+							
+						}
+						
+					}
+				}
+			}
+		}
+	}
+	
+	int further = -1;
+	int select = 0;
+	for(k=3; k>=0; k--)
+	{
+		if(nowPlayer[indexPlayer].position[k] > further)
+		{
+			further = nowPlayer[indexPlayer].position[k];
+			select = k;
+		}
+	}
+	nowPlayer[indexPlayer].selectedPion = select;
+	selected = select + 1;
+	return selected;
+		
+		/*
 		if (i != indexPlayer)
 		{
 			if(i == 0)
@@ -2203,11 +2208,12 @@ int killer(int dadu)
 					}
 				}
 				
-			}
-			
+			}	
 		}
 	}
+	*/
 	
+	/*
 	// mendekati calon korban
 	if(canKill == 0)
 	{
@@ -2269,11 +2275,13 @@ int killer(int dadu)
 					}
 					
 				}
-				
 			}
 		}
 	}
+	*/
 	// berjalan seperti Yamaha
+	
+	/*
 	else
 	{
 		int further = -1;
@@ -2291,6 +2299,7 @@ int killer(int dadu)
 		selected = select + 1;
 		return selected;
 	}
+	*/
 	
 	
 
@@ -2626,12 +2635,5 @@ int killer(int dadu)
 //		}
 //	}
 }
-
-
-
-
-
-
-
 
 

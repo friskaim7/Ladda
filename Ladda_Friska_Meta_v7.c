@@ -148,7 +148,7 @@ void move_pion(int dadu, int selected);
 void visual_move_pion();
 bool check_win();
 bool randomAgain(int countRandomDadu, int dadu);
-bool safezone();
+bool safezone(int position);
 bool check_kill(); 
 void killing();
 void game_over();
@@ -890,6 +890,7 @@ void play()
         		gotoxy(75,9);printf("Press P to pause the game...");
             	respond = getch();
 			}
+			
 			if((respond == 'S') || (respond == 's'))
 			{
 				save_game();
@@ -951,6 +952,7 @@ void play()
             {
             	killing();
 			}
+			
             again = false;
             again = randomAgain(countRandomDadu, dadu);
             if (again == true)
@@ -1847,7 +1849,7 @@ bool check_kill(int dadu)
 				
 				if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
 				{
-					safe = safezone();
+					safe = safezone(nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion]);
 					if(safe == true)
 					{
 						return false;
@@ -1859,81 +1861,13 @@ bool check_kill(int dadu)
 				}
 			}
 		}
-		
-		/*
-		if(i != indexPlayer)
-		{
-			if(i == 0)
-			{
-				otherPlayerStart = 0;
-			}
-			else if(i == 1)
-			{
-				otherPlayerStart = 11;
-			}
-			else if(i == 2)
-			{
-				otherPlayerStart = 22;
-			}
-			else if(i == 3)
-			{
-				otherPlayerStart = 33;
-			}
-		}
-		else if(i == indexPlayer)
-		{
-			if(i == 0)
-			{
-				start = 0;
-			}
-			else if(i == 1)
-			{
-				start = 11;
-			}
-			else if(i == 2)
-			{
-				start = 22;
-			}
-			else if(i == 3)
-			{
-				start = 33;
-			}
-		}
-		
-		for(j=0; j<4; j++)
-		{
-			if (nowPlayer[i].position[j] + otherPlayerStart > 43)
-			{
-				otherPlayerStart -= 44;	
-			}
-			
-			if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
-			{
-				start -= 44;	
-			}
-			
-			if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
-			{
-				safe = safezone();
-				if(safe == true)
-				{
-					return false;
-				}
-				else if(safe == false)
-				{
-					return true;
-				}	
-			}
-		}
-		*/
-			
 	}
 	
 }
 
-bool safezone()
+bool safezone(int position)
 {
-	switch(nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion])
+	switch(position)
 	{
 		case 0:
 		case 6: 
@@ -2692,10 +2626,6 @@ int killer(int dadu)
 //		}
 //	}
 }
-
-
-
-
 
 
 

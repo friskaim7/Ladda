@@ -185,9 +185,6 @@ int main()
  	system("MODE 190,56");
 	Ladda_screen();
 	menu_screen();
-	
-	
-	
  }
  
  
@@ -416,6 +413,7 @@ void load_game()
 					nowPlayer[i].onTrackPion[j] = false;
 				}
 			}
+			printf("%s\n", nowPlayer[i].name);
 		}
 	}
 	fclose(load);
@@ -1829,6 +1827,40 @@ bool check_kill(int dadu)
 	int start;
 	for(i=0; i<4; i++)
 	{
+		// handle pembunuhan
+		if (i != indexPlayer)
+		{
+			otherPlayerStart = 0 + (11 * (i - 0));
+			start = 0 + (11 * (indexPlayer - 0));
+			
+			for(j=0; j<4; j++)
+			{
+				if (nowPlayer[i].position[j] + otherPlayerStart > 43)
+				{
+					otherPlayerStart -= 44;	
+				}
+				
+				if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
+				{
+					start -= 44;	
+				}
+				
+				if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
+				{
+					safe = safezone();
+					if(safe == true)
+					{
+						return false;
+					}
+					else if(safe == false)
+					{
+						return true;
+					}	
+				}
+			}
+		}
+		
+		/*
 		if(i != indexPlayer)
 		{
 			if(i == 0)
@@ -1867,9 +1899,20 @@ bool check_kill(int dadu)
 				start = 33;
 			}
 		}
+		
 		for(j=0; j<4; j++)
 		{
-			if((nowPlayer[i].position[j]-otherPlayerStart) == ((nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion]-start)))
+			if (nowPlayer[i].position[j] + otherPlayerStart > 43)
+			{
+				otherPlayerStart -= 44;	
+			}
+			
+			if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
+			{
+				start -= 44;	
+			}
+			
+			if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
 			{
 				safe = safezone();
 				if(safe == true)
@@ -1882,6 +1925,7 @@ bool check_kill(int dadu)
 				}	
 			}
 		}
+		*/
 			
 	}
 	
@@ -1921,6 +1965,42 @@ void killing(int dadu)
 	int Player, Pion;
 	for(i=0; i<4; i++)
 	{
+		// handle pembunuhan
+		if (i != indexPlayer)
+		{
+			otherPlayerStart = 0 + (11 * (i - 0));
+			start = 0 + (11 * (indexPlayer - 0));
+			
+			for(j=0; j<4; j++)
+			{
+				if (nowPlayer[i].onTrackPion[j])
+				{
+					if (nowPlayer[i].position[j] + otherPlayerStart > 43)
+					{
+						otherPlayerStart -= 44;	
+					}
+					
+					if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
+					{
+						start -= 44;	
+					}
+	
+					if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
+					{
+						nowPlayer[i].position[j] = -1;
+						nowPlayer[i].onTrackPion[j] = false;
+						Player = i;
+						Pion = j;
+						gotoxy(75,6);printf("                                                                    ");
+						gotoxy(75,6);printf("Pion %d milik %s kembali ke Home.", j+1, nowPlayer[i].name);
+						visual_move_pion(Player, Pion);
+						gotoxy(75,7);system("pause");
+					}	
+				}
+			}
+		}
+		
+		/*
 		if(i != indexPlayer)
 		{
 			if(i == 0)
@@ -1963,7 +2043,17 @@ void killing(int dadu)
 		{
 			if (nowPlayer[i].onTrackPion[j])
 			{
-				if((nowPlayer[i].position[j]-otherPlayerStart) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion]-start))
+				if (nowPlayer[i].position[j] + otherPlayerStart > 43)
+				{
+					otherPlayerStart -= 44;	
+				}
+				
+				if (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] + start > 43)
+				{
+					start -= 44;	
+				}
+
+				if((nowPlayer[i].position[j] - start) == (nowPlayer[indexPlayer].position[nowPlayer[indexPlayer].selectedPion] - otherPlayerStart))
 				{
 					nowPlayer[i].position[j] = -1;
 					nowPlayer[i].onTrackPion[j] = false;
@@ -1977,7 +2067,7 @@ void killing(int dadu)
 			}
 			
 		}
-			
+		*/	
 	}
 }
 
